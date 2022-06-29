@@ -6,7 +6,7 @@ This repository is Implemented from the paper "Learning the Common Structure of 
 ## installation
 
 ```
-pip install learn-structure-datapro
+pip install datapro-learning
 ```
 
 ## Get started
