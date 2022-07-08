@@ -72,7 +72,7 @@ class DataPro:
     return cdf < alpha
 
   def load_tree_type(self, path) :
-    self.tree_type = self.tree_type.load_tree_type(path)
+    self.tree_type.load_tree_type(path)
   
   def fit(self, data) :
     self.data = data
@@ -100,7 +100,7 @@ class DataPro:
           C.examples = [ex for ex in Q.examples if (Q.next_po < len(ex) and self.tree_type.follow_by(ex[Q.next_po],tokenT))]
           C.count = len(C.examples)
           C.pattern.append(tokenT)
-          C.regex += self.tree_type.unfix_format(self.tree_type.tree_type[tokenT]["regex"])
+          C.regex += self.tree_type.unfix_format(self.tree_type.data[tokenT]["regex"])
           if self.significant(C.count, Q.count, dict_token[tokenT], token_count, self.alpha) :
             Q.children.append(C)
         
@@ -165,7 +165,7 @@ class DataPro:
         if size_pattern == len(data) :
           is_match = True
           for token_i in range(size_pattern) :
-            if not re.search(self.tree_type.tree_type[pattern[token_i]]["regex"], data[token_i]):
+            if not re.search(self.tree_type.data[pattern[token_i]]["regex"], data[token_i]):
               is_match = False
               break
           if is_match: cnt+=1

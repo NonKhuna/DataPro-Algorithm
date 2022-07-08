@@ -5,20 +5,12 @@
       "PUNCT",
       "ALPHANUM"
     ],
-    "parent": "",
-    "code": {
-      "key": "@",
-      "data": ""
-    }
+    "parent": ""
   },
   "PUNCT": {
     "regex": "^[\\.\\?!,:'()\"]$",
     "children": [],
-    "parent": "TOKEN",
-    "code": {
-      "key": "A",
-      "data": "A1"
-    }
+    "parent": "TOKEN"
   },
   "ALPHANUM": {
     "regex": "[\\da-zA-Z]+",
@@ -26,11 +18,7 @@
       "ALPHA",
       "NUMBER"
     ],
-    "parent": "TOKEN",
-    "code": {
-      "key": "A",
-      "data": "A2"
-    }
+    "parent": "TOKEN"
   },
   "ALPHA": {
     "regex": "^[a-zA-Z]+$",
@@ -39,75 +27,43 @@
       "LOWER",
       "ALLCAPS"
     ],
-    "parent": "ALPHANUM",
-    "code": {
-      "key": "B",
-      "data": "A2.B1"
-    }
+    "parent": "ALPHANUM"
   },
   "NUMBER": {
     "regex": "^(-?(\\d*\\.?\\d*)|(-?\\d+(\\,\\d+)*))$",
     "children": ["DECIMAL", "INT"],
-    "parent": "ALPHANUM",
-    "code": {
-      "key": "B",
-      "data": "A2.B2"
-    }
+    "parent": "ALPHANUM"
   },
   "DECIMAL": {
     "regex": "^-?\\d*\\.\\d*$",
     "children": [],
-    "parent": "NUMBER",
-    "code": {
-      "key": "C",
-      "data": "A2.B2.C1"
-    }
+    "parent": "NUMBER"
   },
   "INT": {
     "regex": "^(-?\\d+(\\,\\d+)*)$",
     "children": ["DIGIT"],
-    "parent": "NUMBER",
-    "code": {
-      "key": "C",
-      "data": "A2.B2.C2"
-    }
+    "parent": "NUMBER"
   },
   "DIGIT": {
     "regex": "^\\d+$",
     "children": [],
-    "parent": "INT",
-    "code": {
-      "key": "D",
-      "data": "A2.B2.C2.D1"
-    }
+    "parent": "INT"
   },
   "CAPS": {
     "regex": "^[A-Z][a-z]*$",
     "children": [
     ],
-    "parent": "ALPHA",
-    "code": {
-      "key": "C",
-      "data": "A2.B1.C2"
-    }
+    "parent": "ALPHA"
   },
   "LOWER": {
     "regex": "^[a-z]+$",
     "children": [],
-    "parent": "ALPHA",
-    "code":  {
-      "key": "C",
-      "data": "A2.B1.C3"
-    }
+    "parent": "ALPHA"
   },
   "ALLCAPS": {
     "regex": "^[A-Z]+$",
     "children": [],
-    "parent": "CAPS",
-    "code":  {
-      "key": "C",
-      "data": "A2.B1.C1"
-    }
+    "parent": "CAPS"
   },
   "HTML": {
     "regex": "",

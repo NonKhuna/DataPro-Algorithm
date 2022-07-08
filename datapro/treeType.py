@@ -1,6 +1,7 @@
 import json
 import re
 from queue import Queue
+from pathlib import Path
 
 class TreeOfType:
   """
@@ -11,8 +12,11 @@ class TreeOfType:
   :type path: str
   """
 
-  def __init__(self, path=r"datapro\tree-type.json"):
-    self.tree_type = self.load_tree_type(path)
+  def __init__(self):
+    self.data = dict()
+
+    default_tree_type = Path('datapro/tree-type.json')
+    self.load_tree_type(default_tree_type)
   
   def load_tree_type(self, path):
     '''
@@ -24,10 +28,38 @@ class TreeOfType:
       :return: The json datastructure as dict
       :rtype: dict
     '''
-    with open(path, 'r') as f :
-      tree = json.load(f)
-    return tree
+    filename = Path(path)
+    if not filename.exists():
+      print("Not found.")
+    else :
+      with open(filename, 'r') as f :
+        tree = json.load(f)
+      self.data = tree
+      self.generate_code()
+  
+  def generate_code(self):
+    '''
+      Generate code for each node. consist of key and data. lower equal A, B, C ..
+    '''
+    _tree_type = self.data
 
+    q = Queue()
+    _tree_type["TOKEN"]['code'] = dict()
+    _tree_type["TOKEN"]["code"]["key"] = '@'
+    _tree_type["TOKEN"]["code"]["data"] = ''
+    q.put("TOKEN")
+    
+    while not q.empty() :
+      now_node = q.get()
+      for i, child in enumerate(_tree_type[now_node]['children']) :
+        now_key = ord(_tree_type[now_node]["code"]["key"])
+        before_data = _tree_type[now_node]["code"]["data"]
+        _tree_type[child]["code"] = dict()
+        _tree_type[child]["code"]["key"] = chr(now_key+1)
+        _tree_type[child]["code"]["data"] = before_data + "." + chr(now_key+1) + str(i+1)
+        q.put(child)
+    self.data = _tree_type
+      
   def fix_format(self, token):
     """
       Fix start and end with only 1 token.
@@ -77,7 +109,7 @@ class TreeOfType:
       :return: The result of checking.
       :rtype: bool
     """
-    return re.search(self.tree_type[tokenT]["regex"], token)
+    return re.search(self.data[tokenT]["regex"], token)
 
   def sub_generalize(self, token1,token2): # O(1)
     """
@@ -92,8 +124,8 @@ class TreeOfType:
       :return: The result of checking.
       :rtype: bool
     """
-    dif_level = abs(ord(self.tree_type[token1]["code"]["key"]) - ord(self.tree_type[token2]["code"]["key"]))
-    return self.tree_type[token2]["code"]["data"] in self.tree_type[token1]["code"]["data"] and dif_level==1
+    dif_level = abs(ord(self.data[token1]["code"]["key"]) - ord(self.data[token2]["code"]["key"]))
+    return self.data[token2]["code"]["data"] in self.data[token1]["code"]["data"] and dif_level==1
 
   def create_tree_type_node(self, token_name, parent, regex):
     """
@@ -108,14 +140,14 @@ class TreeOfType:
       :param regex: Regular expression of this node.
       :type regex: str
     """
-    self.tree_type[token_name] = dict()
-    self.tree_type[token_name]["regex"] = regex
-    self.tree_type[token_name]["children"] = []
-    self.tree_type[token_name]["parent"] = parent
-    self.tree_type[token_name]["code"] = dict()
-    self.tree_type[token_name]["code"]["key"] = chr(ord(self.tree_type[parent]["code"]["key"]) + 1)
-    self.tree_type[token_name]["code"]["data"] = self.tree_type[parent]["code"]["data"] + "." + self.tree_type[token_name]["code"]["key"] + str(len(self.tree_type[parent]["children"]))
-    self.tree_type[parent]["children"].append(token_name)
+    self.data[token_name] = dict()
+    self.data[token_name]["regex"] = regex
+    self.data[token_name]["children"] = []
+    self.data[token_name]["parent"] = parent
+    self.data[token_name]["code"] = dict()
+    self.data[token_name]["code"]["key"] = chr(ord(self.data[parent]["code"]["key"]) + 1)
+    self.data[token_name]["code"]["data"] = self.data[parent]["code"]["data"] + "." + self.data[token_name]["code"]["key"] + str(len(self.data[parent]["children"]))
+    self.data[parent]["children"].append(token_name)
 
   def assign_type(self, token, grows_tree=False) :
     """
@@ -134,7 +166,7 @@ class TreeOfType:
     types = set()
     parent = "TOKEN" # last node that matching.
 
-    _tree_type = self.tree_type
+    _tree_type = self.data
 
     q = Queue()
     for k in _tree_type["TOKEN"]["children"] :
@@ -142,6 +174,7 @@ class TreeOfType:
 
     while not q.empty() :
       now_type = q.get()
+      if (now_type not in  _tree_type) : continue
       if re.search( _tree_type[now_type]["regex"], self.revese_escape(token)) :
         types.add(now_type)
         parent = now_type
@@ -178,15 +211,16 @@ class TreeOfType:
       print("---------- Type's Tree -------------")
       print("TOKEN")
     cnt = 0
-    size = len(self.tree_type[root]['children'])
-    for child in self.tree_type[root]['children'] :
-      self.print_space(stack_space)
-      if cnt == size-1 :
-        print("└── " + child)
-      else :
-        print("├── " + child)
-      temp = stack_space.copy()
-      temp.append([2 + int(len(child)/2), cnt == size-1])
-      self.display(child, level+1, temp)
-      cnt+=1
+    size = len(self.data[root]['children'])
+    for child in self.data[root]['children'] :
+      if child in self.data :
+        self.print_space(stack_space)
+        if cnt == size-1 :
+          print("└── " + child)
+        else :
+          print("├── " + child)
+        temp = stack_space.copy()
+        temp.append([2 + int(len(child)/2), cnt == size-1])
+        self.display(child, level+1, temp)
+        cnt+=1
     

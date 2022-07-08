@@ -13,12 +13,11 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='datapro',
-    version="0.1.0",
+    version="1.0",
     description="learning common data structure",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=["datapro"],
     include_package_data=True,
     install_requires=['pandas','numpy','pythainlp','scipy','openpyxl'],
-    packages=find_packages()
 )
