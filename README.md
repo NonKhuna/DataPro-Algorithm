@@ -38,7 +38,7 @@ print(datapro.evaluate_score())
 # Customize 
 ## Load new type's tree.
 This algorithm uses a type's tree to assign types to tokens and can be configured by using JSON file with a structure like the below.
-> **_NOTE:_**  Every time there is a new significant token, it's will be a child of these nodes as a specific node.
+> **_NOTE:_**  When there is a new significant token, it's will be a child of these nodes as a specific node.
 ```json
   {
     "TOKEN": {
